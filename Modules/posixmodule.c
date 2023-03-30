@@ -4911,7 +4911,7 @@ os__path_isfile_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        fileAttributes = GetFileAttributesW(_path.wide)
+        fileAttributes = GetFileAttributesW(_path.wide);
         if (fileAttributes != -1) {
             if (!(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
@@ -5017,7 +5017,7 @@ os__path_exists_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        fileAttributes = GetFileAttributesW(_path.wide)
+        fileAttributes = GetFileAttributesW(_path.wide);
         if (fileAttributes != -1) {
             if (!(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
@@ -5115,7 +5115,7 @@ os__path_islink_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        fileAttributes = GetFileAttributesW(_path.wide)
+        fileAttributes = GetFileAttributesW(_path.wide);
         if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
                                          &statInfo, sizeof(statInfo))
             && fileAttributes != -1) {

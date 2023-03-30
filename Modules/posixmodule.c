@@ -4791,7 +4791,7 @@ os__path_isdir_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("isdir", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    FILE_STAT_BASIC_INFORMATION statInfo;
+    DWORD statInfo;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -4898,7 +4898,7 @@ os__path_isfile_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("isfile", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    FILE_STAT_BASIC_INFORMATION statInfo;
+    DWORD statInfo;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -5004,7 +5004,7 @@ os__path_exists_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("exists", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    FILE_STAT_BASIC_INFORMATION statInfo;
+    DWORD statInfo;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -5101,7 +5101,7 @@ os__path_islink_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("islink", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    FILE_STAT_BASIC_INFORMATION statInfo;
+    DWORD statInfo;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);

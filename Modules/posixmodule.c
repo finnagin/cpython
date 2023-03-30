@@ -4805,7 +4805,7 @@ os__path_isdir_impl(PyObject *module, PyObject *path)
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
         fileAttributes = GetFileAttributesW(_path.wide);
-        if (if fileAttributes != -1) {
+        if (fileAttributes != -1) {
             if (!(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
                 result = fileAttributes & FILE_ATTRIBUTE_DIRECTORY;
@@ -5119,7 +5119,6 @@ os__path_islink_impl(PyObject *module, PyObject *path)
         if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
                                          &statInfo, sizeof(statInfo))
             && fileAttributes != -1) {
-            
             if (// Cannot use fast path for reparse points ...
                 !(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
                 // ... unless it's a name surrogate (symlink)

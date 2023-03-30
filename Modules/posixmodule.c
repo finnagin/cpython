@@ -4791,7 +4791,7 @@ os__path_isdir_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("isdir", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    DWORD statInfo;
+    DWORD fileAttributes;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -4804,12 +4804,12 @@ os__path_isdir_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        statInfo = GetFileAttributesW(_path.wide);
-        if (if statInfo != -1) {
-            if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
+        fileAttributes = GetFileAttributesW(_path.wide);
+        if (if fileAttributes != -1) {
+            if (!(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
-                result = statInfo.FileAttributes & FILE_ATTRIBUTE_DIRECTORY;
-            } else if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                result = fileAttributes & FILE_ATTRIBUTE_DIRECTORY;
+            } else if (!(fileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
                 slow_path = FALSE;
                 result = 0;
             }
@@ -4898,7 +4898,7 @@ os__path_isfile_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("isfile", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    DWORD statInfo;
+    DWORD fileAttributes;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -4911,12 +4911,12 @@ os__path_isfile_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        statInfo = GetFileAttributesW(_path.wide)
-        if (statInfo != -1) {
-            if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
+        fileAttributes = GetFileAttributesW(_path.wide)
+        if (fileAttributes != -1) {
+            if (!(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
-                result = !(statInfo.FileAttributes & FILE_ATTRIBUTE_DIRECTORY);
-            } else if (statInfo.FileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                result = !(fileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+            } else if (fileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
                 slow_path = FALSE;
                 result = 0;
             }
@@ -5004,7 +5004,7 @@ os__path_exists_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("exists", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    DWORD statInfo;
+    DWORD fileAttributes;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -5017,9 +5017,9 @@ os__path_exists_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        statInfo = GetFileAttributesW(_path.wide)
-        if (statInfo != -1) {
-            if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
+        fileAttributes = GetFileAttributesW(_path.wide)
+        if (fileAttributes != -1) {
+            if (!(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
                 result = 1;
             }
@@ -5101,7 +5101,8 @@ os__path_islink_impl(PyObject *module, PyObject *path)
     path_t _path = PATH_T_INITIALIZE("islink", "path", 0, 1);
     int result;
     BOOL slow_path = TRUE;
-    DWORD statInfo;
+    DWORD fileAttributes;
+    FILE_STAT_BASIC_INFORMATION statInfo;
 
     if (!path_converter(path, &_path)) {
         path_cleanup(&_path);
@@ -5114,10 +5115,13 @@ os__path_islink_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        statInfo = GetFileAttributesW(_path.wide)
-        if (statInfo != -1) {
+        fileAttributes = GetFileAttributesW(_path.wide)
+        if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
+                                         &statInfo, sizeof(statInfo))
+            && fileAttributes != -1) {
+            
             if (// Cannot use fast path for reparse points ...
-                !(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
+                !(fileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
                 // ... unless it's a name surrogate (symlink)
                 || IsReparseTagNameSurrogate(statInfo.ReparseTag)
             ) {

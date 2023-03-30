@@ -4785,6 +4785,7 @@ os__path_isdir_impl(PyObject *module, PyObject *path)
 /*[clinic end generated code: output=00faea0af309669d input=b1d2571cf7291aaf]*/
 {
     HANDLE hfile;
+    HANDLE gfile;
     BOOL close_file = TRUE;
     FILE_BASIC_INFO info;
     path_t _path = PATH_T_INITIALIZE("isdir", "path", 0, 1);
@@ -4803,8 +4804,8 @@ os__path_isdir_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
-                                         &statInfo, sizeof(statInfo))) {
+        statInfo = GetFileAttributesW(_path.wide);
+        if (if statInfo != -1) {
             if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
                 result = statInfo.FileAttributes & FILE_ATTRIBUTE_DIRECTORY;
@@ -4910,8 +4911,8 @@ os__path_isfile_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
-                                         &statInfo, sizeof(statInfo))) {
+        statInfo = GetFileAttributesW(_path.wide)
+        if (statInfo != -1) {
             if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
                 result = !(statInfo.FileAttributes & FILE_ATTRIBUTE_DIRECTORY);
@@ -5016,8 +5017,8 @@ os__path_exists_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
-                                         &statInfo, sizeof(statInfo))) {
+        statInfo = GetFileAttributesW(_path.wide)
+        if (statInfo != -1) {
             if (!(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)) {
                 slow_path = FALSE;
                 result = 1;
@@ -5113,8 +5114,8 @@ os__path_islink_impl(PyObject *module, PyObject *path)
 
     Py_BEGIN_ALLOW_THREADS
     if (_path.wide) {    
-        if (_Py_GetFileInformationByName(path, FileStatBasicByNameInfo,
-                                         &statInfo, sizeof(statInfo))) {
+        statInfo = GetFileAttributesW(_path.wide)
+        if (statInfo != -1) {
             if (// Cannot use fast path for reparse points ...
                 !(statInfo.FileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
                 // ... unless it's a name surrogate (symlink)

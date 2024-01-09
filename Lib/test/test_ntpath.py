@@ -229,8 +229,8 @@ class TestNtpath(NtpathTestCase):
     def test_isabs(self):
         tester('ntpath.isabs("c:\\")', 1)
         tester('ntpath.isabs("\\\\conky\\mountpoint\\")', 1)
-        tester('ntpath.isabs("\\foo")', 1)
-        tester('ntpath.isabs("\\foo\\bar")', 1)
+        tester('ntpath.isabs("\\\\foo")', 1)
+        tester('ntpath.isabs("\\\\foo\\bar")', 1)
 
         # gh-96290: normal UNC paths and device paths without trailing backslashes
         tester('ntpath.isabs("\\\\conky\\mountpoint")', 1)

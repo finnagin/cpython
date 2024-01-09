@@ -91,7 +91,7 @@ def isabs(s):
         altsep = b'/'
         colon_sep = b':\\'
     else:
-        sep = '\\'
+        sep = '\\\\'
         altsep = '/'
         colon_sep = ':\\'
     s = s[:3].replace(altsep, sep)
